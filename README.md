@@ -261,10 +261,6 @@ The `--cores` option allows you to control CPU utilization:
 - **Optimized Network**: HTTP keep-alive and connection pooling
 - **Fast Dashboard**: 250ms refresh rate for smooth updates
 
-**Benchmark Example:**
-- 10,000 wordlist entries
-- 8 CPU cores
-- Average: ~50,000+ requests/second (depending on target server)
 
 ## 🤝 Contributing
 
