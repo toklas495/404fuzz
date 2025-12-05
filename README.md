@@ -13,7 +13,7 @@
 
 </div>
 
-![404fuzz](./src/config/404fuzz.png)
+![404fuzz](./src/config/404fuzz_logo.png)
 
 ---
 
