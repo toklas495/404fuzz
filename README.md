@@ -13,6 +13,8 @@
 
 </div>
 
+![404fuzz](./src/config/404fuzz.png)
+
 ---
 
 ## 🚀 Features
