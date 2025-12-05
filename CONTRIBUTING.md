@@ -27,7 +27,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 - **Use case** - why is this feature useful?
 - **Proposed solution** (if you have one)
 
-### How To Contribute
+### Pull Requests
 
 1. Fork the repo
 2. Create a new branch (`git checkout -b feature/amazing-feature`)
