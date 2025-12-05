@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 404fuzz — fuzz with a brain 🧠
 
 <div align="center">
@@ -315,3 +316,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⭐ Star this repo](https://github.com/toklas495/404fuzz) • [🐛 Report Bug](https://github.com/toklas495/404fuzz/issues) • [💡 Request Feature](https://github.com/toklas495/404fuzz/issues)
 
 </div>
+=======
+# 404fuzz — fuzz with a brain
+>>>>>>> origin/main
