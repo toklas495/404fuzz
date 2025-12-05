@@ -27,14 +27,15 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 - **Use case** - why is this feature useful?
 - **Proposed solution** (if you have one)
 
-### Pull Requests
+### How To Contribute
 
-1. Fork the repo and create your branch from `dev`
-2. If you've added code that should be tested, add tests
-3. Ensure the code follows the existing style
-4. Update the documentation as needed
-5. Write a clear commit message
-6. Submit the pull request
+1. Fork the repo
+2. Create a new branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Test thoroughly
+5. Commit (`git commit -m 'Add amazing feature'`)
+6. Push (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## Development Process
 
