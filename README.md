@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 404fuzz — fuzz with a brain 🧠
 
 <div align="center">
@@ -318,4 +317,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 </div>
 =======
 # 404fuzz — fuzz with a brain
->>>>>>> origin/main
+
