@@ -1,1 +1,1 @@
-# 404fuzz — ffuf with a brain
+# 404fuzz — fuzz with a brain
