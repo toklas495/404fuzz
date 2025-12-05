@@ -92,7 +92,7 @@ export default function paramHandler({url,header,method,data}){
             throw new CliError({
                 isKnown:true,
                 message:`Invalid Url Format: ${url}`,
-                code:code,
+                code:error.code,
                 category:"validation",
                 url
             })

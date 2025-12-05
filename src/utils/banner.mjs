@@ -8,7 +8,7 @@ export default function banner(){
 ⠉⡹⠞⠛⠙⠙⠛⢫⣿⢿⣏⡉⠉⠉⠛⣛⣛⠷⠶⠭⣖⣷⣄⠀⠈⣿⣦⣵⣾⡿⣟⣻⣍⣇⢻⣟⡍⣾⠸⡇⡀⠀
 ⠀⠀⠀⠈⠀⠀${theme.warn("⠠⣾⣻⣯⢿⣦")}⠀⠀⠈⠀⠀⠀⠀⠀⠀⠉⠛⠷⣄⡈⠻⣯⣗⡿⣯⡷⢯⣶⣹⠋⠠⠿⠈⠃⠁⠀
 ⠀⠀⠀⠀⠀⠀${theme.warn("⣼⣳⣿⢧⣿⡽⣧⡀")}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢁⣍⣿⣾⣯⡛⠿⠿⠟⠛⠋⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀${theme.warn("⣿⣳⣿⣞⡭⣿⣿⡗")}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⣷⣿⡟⢧⢶⠀⠀⠀⠀⠀⠀${theme.warn("404fuzz")}${theme.warn(" — ffuf with a brain")}⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀${theme.warn("⣿⣳⣿⣞⡭⣿⣿⡗")}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣷⣷⣿⡟⢧⢶⠀⠀⠀⠀⠀⠀${theme.warn("404fuzz")}${theme.warn(" — fuzz with a brain")}⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀${theme.warn("⢹⣿⣿⣿⣾⣿⣿⡧")}⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣽⣿⡇⢸⡿⢧⣠⣦⣀⠀⠀${theme.warn("Like an ant, 404fuzz never gets tired")}⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀${theme.warn("⠛⢿⣿⣿⡿⠟⠅")}⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⠟⣿⣧⡾⠃⣸⣿⣿⡿⠀⠀${theme.warn("by ")}${theme.info("toklas495")}⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⠴⣖⢢⡾⣇⣿⣿⣷⢾⣿⣽⡶⠿⠛⠉⠀⠛⢦⡆⠀⠀⠀⠀

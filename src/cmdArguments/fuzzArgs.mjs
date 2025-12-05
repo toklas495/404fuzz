@@ -27,7 +27,8 @@ const fuzzArgs = (yargs)=>{
     .option("wordlist",{
         type:"string",
         describe:"Wordlist file path and (optional) keyword separated by colon. eg. '/path/to/wordlist:KEYWORD",
-        alias:"w"
+        alias:"w",
+        demandOption: true
     })
     .option("timeout",{
         type:"number",
@@ -59,8 +60,35 @@ const fuzzArgs = (yargs)=>{
         describe:"Filter HTTP status codes from response. Comma separated list of codes",
         coerce:(val)=>val==="all"?[]:val.split(",").map(n=>Number(n.trim()))
     })
+    .option("cores",{
+        alias:"c",
+        type:"string",
+        default:"half",
+        describe:"Number of CPU cores to use. Options: 'half', 'all', 'single', or a number (e.g., 2, 3, 4). Default: 'half'",
+        coerce:(val)=>{
+            const lowerVal = String(val).toLowerCase().trim();
+            if (lowerVal === 'half' || lowerVal === 'all' || lowerVal === 'single') {
+                return lowerVal;
+            }
+            const num = parseInt(lowerVal);
+            if (isNaN(num) || num < 1) {
+                throw new CliError({
+                    isKnown: true,
+                    type: 'warn',
+                    message: `Invalid cores value: ${val}. Must be 'half', 'all', 'single', or a positive number.`
+                });
+            }
+            return num;
+        }
+    })
     .example(
-        "404fuzz https://api.example.com/user -X POST -d '{\"email\":\"value\"}'"
+        "404fuzz fuzz https://api.example.com/user -X POST -d '{\"email\":\"value\"}'"
+    )
+    .example(
+        "404fuzz fuzz https://api.example.com/FUZZ -w wordlist.txt -c 4"
+    )
+    .example(
+        "404fuzz fuzz https://api.example.com/FUZZ -w wordlist.txt --cores half"
     )
     .check((argv)=>{
         // validate header
@@ -84,6 +112,29 @@ const fuzzArgs = (yargs)=>{
         if(argv.concurrent){
             const concurrent = parseInt(argv.concurrent);
             if(!concurrent) throw new CliError({isKnown:true,type:'warn',message:`Invalid concurrent!`});
+        }
+
+        // Validate cores option
+        if(argv.cores){
+            const cores = argv.cores;
+            if(typeof cores === 'string'){
+                const validOptions = ['half', 'all', 'single'];
+                if(!validOptions.includes(cores.toLowerCase())){
+                    throw new CliError({
+                        isKnown: true,
+                        type: 'warn',
+                        message: `Invalid cores option: ${cores}. Must be 'half', 'all', or 'single'.`
+                    });
+                }
+            } else if(typeof cores === 'number'){
+                if(cores < 1){
+                    throw new CliError({
+                        isKnown: true,
+                        type: 'warn',
+                        message: `Invalid cores number: ${cores}. Must be a positive number.`
+                    });
+                }
+            }
         }
 
         return true;

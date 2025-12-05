@@ -73,7 +73,7 @@ class Request{
     }
 
     addBody(body={}){
-        this.payload = JSON.stringify(body);
+        this.payload = body;
         this.options.headers = this.options?.headers||{};
         if(!this.options.headers.hasOwnProperty("Content-Length")) this.options.headers["Content-Length"] = Buffer.byteLength(this.payload);
         return this;
