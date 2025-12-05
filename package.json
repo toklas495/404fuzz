@@ -1,30 +1,50 @@
 {
   "name": "404fuzz",
   "version": "1.0.0",
-  "description": "404fuzz — ffuf with a brain",
+  "description": "A blazing-fast, multi-core HTTP fuzzing tool written in Node.js. Like an ant, 404fuzz never gets tired.",
   "license": "MIT",
-  "author": "toklas495",
+  "author": {
+    "name": "toklas495",
+    "url": "https://github.com/toklas495"
+  },
   "main": "app.mjs",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "chmod +x app.mjs && npm link"
+    "build": "chmod +x app.mjs && npm link",
+    "start": "node app.mjs"
   },
   "bin": {
     "404fuzz": "./app.mjs"
   },
   "keywords": [
+    "fuzzing",
+    "fuzzer",
+    "http-fuzzer",
+    "web-fuzzer",
     "api",
     "cli",
     "http",
     "testing",
+    "security",
+    "pentesting",
+    "bug-hunting",
     "ffuf",
     "wfuzz",
-    "bughunting"
+    "directory-brute-force",
+    "endpoint-discovery",
+    "web-security"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/toklas495/404fuzz"
+    "url": "https://github.com/toklas495/404fuzz.git"
   },
+  "bugs": {
+    "url": "https://github.com/toklas495/404fuzz/issues"
+  },
+  "homepage": "https://github.com/toklas495/404fuzz#readme",
   "dependencies": {
     "chalk": "^5.6.2",
     "yargs": "^18.0.0"
