@@ -4,6 +4,7 @@ let lastTotal = 0;
 let peakRps = 0;
 let dashboardInterval = null;
 let isCleanedUp = false;
+let isInitialized = false; // Track if dashboard was initialized
 
 let totalPlanned = 0;
 let startTime = Date.now();
@@ -13,6 +14,7 @@ export function initDashboard(plannedTotal) {
   totalPlanned = plannedTotal;
   startTime = Date.now();
   isCleanedUp = false;
+  isInitialized = true; // Mark as initialized
   total = 0;
   errors = 0;
   lastTotal = 0;
@@ -125,21 +127,34 @@ export function cleanupDashboard() {
   process.stdout.write("\n"); // New line
   process.stdout.write("\x1b[?25h"); // Show cursor
   
-  // Final stats - professional summary
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  const avgRps = elapsed > 0 ? Math.floor(total / elapsed) : 0;
-  
-  process.stdout.write(`\n${'='.repeat(70)}\n`);
-  process.stdout.write(`✅ Fuzzing completed successfully!\n`);
-  process.stdout.write(`📊 Total Requests: ${total} | Errors: ${errors}\n`);
-  process.stdout.write(`⏱  Time Elapsed: ${elapsed}s | Average RPS: ${avgRps}\n`);
-  process.stdout.write(`🚀 Peak RPS: ${peakRps}\n`);
-  process.stdout.write(`${'='.repeat(70)}\n\n`);
+  // Only show stats if dashboard was actually initialized
+  if (isInitialized) {
+    // Final stats - professional summary
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const avgRps = elapsed > 0 ? Math.floor(total / elapsed) : 0;
+    
+    process.stdout.write(`\n${'='.repeat(70)}\n`);
+    process.stdout.write(`✅ Fuzzing completed successfully!\n`);
+    process.stdout.write(`📊 Total Requests: ${total} | Errors: ${errors}\n`);
+    process.stdout.write(`⏱  Time Elapsed: ${elapsed}s | Average RPS: ${avgRps}\n`);
+    process.stdout.write(`🚀 Peak RPS: ${peakRps}\n`);
+    process.stdout.write(`${'='.repeat(70)}\n\n`);
+  } else {
+    // Dashboard was never initialized - just restore cursor
+    // Don't show misleading "completed successfully" message
+  }
 }
 
 /* ✅ RESTORE TERMINAL ON EXIT */
 process.on("exit", () => {
-  cleanupDashboard();
+  // Only cleanup if dashboard was actually initialized
+  // This prevents cleanup from running on early validation errors
+  if (isInitialized && !isCleanedUp) {
+    cleanupDashboard();
+  } else if (!isInitialized) {
+    // Dashboard never initialized - just restore cursor
+    process.stdout.write("\x1b[?25h"); // Show cursor
+  }
 });
 
 // Note: SIGINT is handled in clusterEngine for proper worker cleanup

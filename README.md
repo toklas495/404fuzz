@@ -1,8 +1,8 @@
-# 404fuzz — fuzz with a brain 🧠
+# 404fuzz — ffuf with a brain 🧠
 
 <div align="center">
 
-![404fuzz Banner](https://img.shields.io/badge/404fuzz-fuzz%20with%20a%20brain-blue?style=for-the-badge)
+![404fuzz Banner](https://img.shields.io/badge/404fuzz-ffuf%20with%20a%20brain-blue?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-1.0.0-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=for-the-badge)
@@ -12,8 +12,6 @@
 [Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Usage](#-usage) • [Examples](#-examples) • [Contributing](#-contributing)
 
 </div>
-
-![404fuzz](./src/config/404fuzz_logo.png)
 
 ---
 
@@ -117,6 +115,8 @@ You should see the 404fuzz banner!
 | `--cores` | `-c` | CPU cores to use (`half`, `all`, `single`, or number) | half |
 | `--match_status` | `-m` | Match HTTP status codes (comma-separated) | - |
 | `--filter_status` | `-f` | Filter HTTP status codes (comma-separated) | - |
+| `--json` | - | Output results in JSON format (JSONL - one JSON object per line) | false |
+| `--output` | `-o` | Save results to file (works with both JSON and normal output) | - |
 
 ### CPU Core Control
 
@@ -210,6 +210,35 @@ The `--cores` option allows you to control CPU utilization:
 404fuzz fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   -t 1000
+```
+
+### JSON Output
+
+```bash
+# Output results in JSON format (JSONL - one JSON object per line)
+404fuzz fuzz https://example.com/FUZZ \
+  -w wordlist.txt \
+  --json
+
+# JSON output format:
+# {"url":"https://example.com/admin","status":200,"size":1234,"words":45,"lines":10,"time":123,"fuzz":"admin"}
+# {"url":"https://example.com/api","status":403,"size":567,"words":12,"lines":3,"time":89,"fuzz":"api"}
+
+# Save JSON output to file using --output (recommended - faster streaming)
+404fuzz fuzz https://example.com/FUZZ \
+  -w wordlist.txt \
+  --json \
+  --output results.json
+
+# Save normal output to file
+404fuzz fuzz https://example.com/FUZZ \
+  -w wordlist.txt \
+  --output results.txt
+
+# Or use shell redirection (slower)
+404fuzz fuzz https://example.com/FUZZ \
+  -w wordlist.txt \
+  --json > results.json
 ```
 
 ## 🔧 How It Works
@@ -315,6 +344,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⭐ Star this repo](https://github.com/toklas495/404fuzz) • [🐛 Report Bug](https://github.com/toklas495/404fuzz/issues) • [💡 Request Feature](https://github.com/toklas495/404fuzz/issues)
 
 </div>
-=======
-# 404fuzz — fuzz with a brain
-

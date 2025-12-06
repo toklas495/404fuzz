@@ -17,95 +17,39 @@ export default async function RequestHandler(argv={},requestModule){
     try{
         let response = await requestModule.send();
         return response;
-    }catch(error){
-    // If it's already a CliError, re-throw it
+    }catch(error){ 
+        // Professional fuzzer error handling:
+        // - Network errors are EXPECTED during fuzzing (timeouts, connection refused, etc.)
+        // - Don't throw CliError for network issues - let fuzzEngine handle silently
+        // - Only throw for truly fatal errors
+        
+        // If it's already a CliError, re-throw it (might be validation error)
         if (error instanceof CliError) {
+            // Only re-throw validation errors - these are fatal
+            if (error.category === 'validation') {
+                throw error;
+            }
+            // For other CliErrors, just throw as-is (fuzzEngine will handle)
             throw error;
         }
         
-        // Handle HTTP status errors (4xx, 5xx)
-        if (error.response && error.response.meta) {
-            const statusCode = error.response.meta.status;
-            if (statusCode >= 400) {
-                throw new CliError({
-                    isKnown: true,
-                    message: `HTTP Error ${statusCode}`,
-                    category: "http",
-                    statusCode: statusCode,
-                    url:path,
-                    details: {
-                        statusText: error.response.meta.message,
-                        body: error.response.response?.body
-                    }
-                });
-            }
-        }
-        
-        // Handle network/system errors
+        // Handle network/system errors - these are EXPECTED in fuzzing
+        // Wrap them but don't make them fatal - fuzzEngine will handle silently
         const code = error.code;
-        switch (code) {
-            case "ENOTFOUND":
-                throw new CliError({
-                    isKnown: true,
-                    message: "Could not resolve host",
-                    code: code,
-                    category: "dns",
-                    url: path,
-                    details: { hostname: hostname }
-                });
-            case "ERR_INVALID_URL":
-                throw new CliError({
-                    isKnown: true,
-                    message: `Invalid URL format: "${path}"`,
-                    code: code,
-                    category: "validation",
-                    url: path
-                });
-            case "ECONNREFUSED":
-                throw new CliError({
-                    isKnown: true,
-                    message: "Connection refused",
-                    code: code,
-                    category: "network",
-                    url: url,
-                    details: {
-                        hostname: hostname,
-                        port: port || (protocol?.includes('https') ? 443 : 80)
-                    }
-                });
-            case "ETIMEDOUT":
-                throw new CliError({
-                    isKnown: true,
-                    message: "Connection timeout",
-                    code: code,
-                    category: "timeout",
-                    url: url,
-                    details: { timeout: timeout }
-                });
-            case "EHOSTUNREACH":
-                throw new CliError({
-                    isKnown: true,
-                    message: "Host unreachable",
-                    code: code,
-                    category: "network",
-                    url: url
-                });
-            case "ENETUNREACH":
-                throw new CliError({
-                    isKnown: true,
-                    message: "Network unreachable",
-                    code: code,
-                    category: "network",
-                    url: url
-                });
-            default:
-                // For unknown errors, wrap them
-                throw new CliError({
-                    message: error.message || "Request failed",
-                    code: code,
-                    originalError: error,
-                    url: path
-                });
-        }
+        
+        // Create a network error that fuzzEngine can handle silently
+        const networkError = new CliError({
+            isKnown: true,
+            message: error.message || "Request failed",
+            code: code,
+            category: code === "ETIMEDOUT" ? "timeout" : 
+                     code === "ENOTFOUND" ? "dns" : 
+                     (code && (code.includes("ECONN") || code.includes("EHOST") || code.includes("ENET"))) ? "network" : "http",
+            originalError: error,
+            url: path
+        });
+        
+        // Throw the error - fuzzEngine will catch and handle silently
+        throw networkError;
     }
 }

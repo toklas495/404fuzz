@@ -1,5 +1,4 @@
 export default function FindFuzz({ path, headers, body }) {
-
     const fuzz_in_request = {
         path: { type: "string", isFuzz: false },
         headers: {
@@ -8,7 +7,7 @@ export default function FindFuzz({ path, headers, body }) {
             isKey: false,
             keys: []
         },
-        body: { type: "object", isFuzz: false}
+        body: { type: "object", isFuzz: false},
     };
 
     // -------- Path --------
@@ -44,7 +43,9 @@ export default function FindFuzz({ path, headers, body }) {
 
         else if (typeof body === "object") {
             let stringBody = JSON.stringify(body).trim().includes("FUZZ");
-            if(stringBody) fuzz_in_request.body.isFuzz = true;
+            if(stringBody){
+                fuzz_in_request.body.isFuzz = true;
+            }
         }
     }
 

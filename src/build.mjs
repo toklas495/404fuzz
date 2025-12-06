@@ -20,7 +20,8 @@ const builder = {
             delay,
             concurrent,
             match_status,
-            filter_status
+            filter_status,
+            json
         } = argv;
         
         const workerId = argv.__workerId ?? 0;
@@ -44,6 +45,7 @@ const builder = {
                 headers:req_headers,
                 body:req_body
             })
+
             // replace request params with fuzz
             //-------------------------------------------------------------
             const requestModule = new Request();
@@ -57,7 +59,9 @@ const builder = {
                 ...(delay!==undefined&&{delay:parseInt(delay)*1000}),
                 ...(concurrent!==undefined&&{concurrency:concurrent}),
                 ...(match_status!==undefined&&{matchStatus:match_status}),
-                ...(filter_status!==undefined&&{filterStatus:filter_status})
+                ...(filter_status!==undefined&&{filterStatus:filter_status}),
+                ...(json!==undefined&&{jsonOutput:json}),
+                ...(argv.output!==undefined&&{outputFile:argv.output})
             })
             await fuzzEngine.fuzz({baseRequest:{
                 hostname,
