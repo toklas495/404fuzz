@@ -149,7 +149,7 @@ class FuzzEngine {
                             const cleanOutput = output.replace(/\x1b\[[0-9;]*m/g, '');
                             this.outputStream.write(cleanOutput);
                         } else {
-                            process.stdout.write(output);
+                            process.stderr.write(output);
                         }
                     }
 
