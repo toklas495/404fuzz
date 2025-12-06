@@ -15,6 +15,8 @@
 
 ---
 
+![404fuzz](./src/config/404fuzz_logo.png)
+
 ## 🚀 Features
 
 - ⚡ **Blazing Fast**: Multi-core cluster architecture for maximum speed
