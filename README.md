@@ -1,8 +1,8 @@
-# 404fuzz — ffuf with a brain 🧠
+# 404fuzz — fuzz with a brain 🧠
 
 <div align="center">
 
-![404fuzz Banner](https://img.shields.io/badge/404fuzz-ffuf%20with%20a%20brain-blue?style=for-the-badge)
+![404fuzz Banner](https://img.shields.io/badge/404fuzz-fuzz%20with%20a%20brain-blue?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-1.0.0-green?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen?style=for-the-badge)
