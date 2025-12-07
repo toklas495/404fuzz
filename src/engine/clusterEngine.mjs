@@ -237,7 +237,6 @@ async function clusterEngine(argv){
         // Setup cluster-level event listeners (only once)
         if (!clusterListenersSetup) {
             cluster.on("message",async(worker,msg)=>{
-                console.log(worker,msg);
                 if(msg?.type==="OUTPUT_RESULT"){
                     await outputWrite(masterOutputStream,msg?.data);
                 }
