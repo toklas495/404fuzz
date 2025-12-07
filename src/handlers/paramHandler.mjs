@@ -70,7 +70,7 @@ export default function paramHandler({url,header,method,data}){
         // body
         let body = undefined;
         if(data){
-            body = data;
+            body = typeof data==='string'?data:String(data);
         }
 
         return {

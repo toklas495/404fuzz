@@ -7,7 +7,11 @@ import CliError from '../utils/Error.mjs';
 import theme from '../utils/theme.mjs';
 import fs from 'fs';
 import banner from '../utils/banner.mjs';
+import { startRpsFlush, stopRpsFlush } from '../utils/liveRps.mjs';
+import {outputStream,outputWrite} from '../handlers/fileHandler.mjs';
 
+
+let masterOutputStream = null; 
 /**
  * Calculate number of cores to use based on user input
  * @param {string|number} coresOption - 'half', 'all', 'single', or a number
@@ -109,6 +113,10 @@ async function clusterEngine(argv){
         if (!argv.json) {
             banner();
             process.stdout.write('\n');
+        }
+
+        if(argv.output){
+            masterOutputStream = outputStream(argv.output);
         }
         
         // EARLY VALIDATION: Check if FUZZ placeholder exists
@@ -228,6 +236,12 @@ async function clusterEngine(argv){
 
         // Setup cluster-level event listeners (only once)
         if (!clusterListenersSetup) {
+            cluster.on("message",async(worker,msg)=>{
+                console.log(worker,msg);
+                if(msg?.type==="OUTPUT_RESULT"){
+                    await outputWrite(masterOutputStream,msg?.data);
+                }
+            })
             // Handle worker exit - single listener for all workers
             cluster.on("exit", (worker, code, signal) => {
                 finishedWorkers++;
@@ -269,14 +283,23 @@ async function clusterEngine(argv){
         argv.__workerId = workerId;
         argv.__workerCount = workerCount;
 
+        // start sending rps stat to master
+        startRpsFlush();
+
         // Handle worker shutdown
         process.on('SIGTERM', () => {
+            //  attempt gracefully stop
+            try{stopRpsFlush();}catch{}
             process.exit(0);
         });
 
         try {
             await builder.requestHander(argv);
+            // ensure flush stopped before exit
+            stopRpsFlush();
+            process.exit(0);
         } catch (error) {
+            try{stopRpsFlush()}catch{}
             if (error instanceof CliError && error.isKnown) {
                 process.stderr.write(`${theme.error(error.message)}\n`);
             } else {

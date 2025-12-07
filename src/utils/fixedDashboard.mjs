@@ -7,6 +7,7 @@ let isInitialized = false; // Track if dashboard was initialized
 
 let totalPlanned = 0;
 let startTime = Date.now();
+let rpsInterval = null;
 
 
 /* ✅ INIT */
@@ -26,6 +27,15 @@ export function initDashboard(plannedTotal) {
   // Just move to a good position for dashboard
   process.stdout.write("\x1b[?25l"); // Hide cursor
   process.stdout.write("\n"); // New line after banner
+
+  // START PEAK RPS TRACKER (MASTER ONLY)
+  rpsInterval = setInterval(()=>{
+    const currentRps = total-lastTotal;
+    if(currentRps>peakRps){
+      peakRps = currentRps;
+    }
+    lastTotal = total;
+  },1000);
 }
 
 /* ✅ MASTER ONLY */
@@ -40,6 +50,7 @@ export function updateStats(successInc = 0, errorInc = 0) {
 export function cleanupDashboard() {
   if (isCleanedUp) return;
   isCleanedUp = true;
+  if(rpsInterval) clearInterval(rpsInterval);
 
   // Save cursor, go to bottom, clear dashboard area then restore cursor
   process.stdout.write("\x1b7");

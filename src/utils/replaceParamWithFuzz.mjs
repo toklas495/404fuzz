@@ -4,18 +4,14 @@ export default function replaceParamsWithFuzz(args, fuzz_in_request, fuzz_word) 
   const replaceArgs = {
     path: args.path,
     headers: args.headers
-      ? JSON.parse(JSON.stringify(args.headers))   // ✅ deep copy
+      ? {...args.headers}   // ✅ deep copy
       : undefined,
     body: args.body
-      ? (typeof args.body === "object"
-          ? JSON.parse(JSON.stringify(args.body)) // ✅ deep copy
-          : args.body)
-      : undefined
   };
 
   // ---- PATH ----
   if (fuzz_in_request?.path?.isFuzz && typeof replaceArgs.path === "string") {
-    replaceArgs.path = replaceArgs.path.replaceAll("FUZZ", fuzz_word);
+    replaceArgs.path = replaceArgs.path.split("FUZZ").join(fuzz_word);
   }
 
   // ---- HEADERS ----
@@ -28,7 +24,7 @@ export default function replaceParamsWithFuzz(args, fuzz_in_request, fuzz_word) 
 
     // ✅ Replace in HEADER VALUES
     for (let key of fuzz_in_request.headers.keys || []) {
-      if (headers[key]) {
+      if (headers[key]&&typeof headers[key]==="string") {
         headers[key] = headers[key].replaceAll("FUZZ", fuzz_word);
       }
     }
@@ -53,8 +49,7 @@ export default function replaceParamsWithFuzz(args, fuzz_in_request, fuzz_word) 
   if (fuzz_in_request?.body?.isFuzz && replaceArgs.body !== undefined) {
 
     if (fuzz_in_request.body.type === "string") {
-      replaceArgs.body = String(replaceArgs.body)
-        .replaceAll("FUZZ", fuzz_word);
+      replaceArgs.body = replaceArgs.body.split("FUZZ").join(fuzz_word);
     } 
     else {
       // ✅ object mode → stringify → replace

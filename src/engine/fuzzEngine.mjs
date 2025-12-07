@@ -23,28 +23,8 @@ class FuzzEngine {
         this.printCounter = 0;
         this.jsonOutput = jsonOutput;
         this.outputFile = outputFile;
-        this.outputStream = null;
-        
-        // Create file stream if output file is specified
-        if (this.outputFile) {
-            try {
-                // Create writable stream with highWaterMark for better performance
-                // Use 'w' flag to overwrite file (faster than append for streaming)
-                this.outputStream = fs.createWriteStream(this.outputFile, {
-                    flags: 'w', // Overwrite mode - faster for streaming
-                    encoding: 'utf8',
-                    highWaterMark: 64 * 1024 // 64KB buffer for better performance
-                });
-            } catch (error) {
-                throw new CliError({
-                    isKnown: true,
-                    message: `Cannot create output file: ${this.outputFile}`,
-                    category: 'validation',
-                    code: error.code,
-                    originalError: error
-                });
-            }
-        }
+
+        this.fuzz = this.fuzz.bind(this);
     }
 
     async fuzz({ baseRequest, fuzz_in_request, fuzzlist }) {
@@ -79,13 +59,6 @@ class FuzzEngine {
                     if (this.filterStatus.length && this.filterStatus.includes(res.meta.status)) return;
                     if (this.matchStatus.length && !this.matchStatus.includes(res.meta.status)) return;
 
-                    // results.push({
-                    //     fuzz,
-                    //     status:res.meta.status,
-                    //     size:res.response.size.totalBytes,
-                    //     time:res.meta.durationMs,
-                    // })
-
                     // Format output similar to ffuf - clean and professional
                     const status = res.meta.status;
                     const size = res.response.size.totalBytes;
@@ -101,8 +74,9 @@ class FuzzEngine {
                         
                         // Calculate words and lines from response body
                         const body = res.response.body || '';
-                        const words = body.trim() ? body.trim().split(/\s+/).length : 0;
-                        const lines = body ? body.split('\n').length : 0;
+                        const isText = /^[\x09\x0A\x0D\x20-\x7E]*$/.test(body);
+                        const words = isText && body.trim() ? body.trim().split(/\s+/).length : 0;
+                        const lines = isText? body.split('\n').length : 0;
                         
                         // JSON output format (similar to ffuf)
                         const jsonResult = {
@@ -111,7 +85,7 @@ class FuzzEngine {
                             size: size,
                             words: words,
                             lines: lines,
-                            time: duration, // Duration in milliseconds
+                            timeMs: res.meta.durationMs, // Duration in milliseconds
                             fuzz: fuzz
                         };
                         
@@ -119,8 +93,8 @@ class FuzzEngine {
                         const output = JSON.stringify(jsonResult) + '\n';
                         
                         // Write to file stream if specified, otherwise stdout
-                        if (this.outputStream) {
-                            this.outputStream.write(output);
+                        if (this.outputFile&&process.send) {
+                            process.send({type:"OUTPUT_RESULT",data:output});
                         } else {
                             process.stdout.write(output);
                         }

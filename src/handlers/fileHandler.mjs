@@ -116,3 +116,47 @@ export async function* streamWordlist(path,workerId=0,totalWorkers=1) {
     if (stream) stream.destroy();
   }
 }
+
+
+export function outputStream(filename){
+  try{
+    // create writable stream with highwatermark for better performance
+    // use 'w' flag to overwrite file (faster than append for streaming)
+    const outputStream = fs.createWriteStream(filename,{
+      flags:"w", // overwrite mode faster for streaming
+      encoding:"utf-8",
+      highWaterMark:64*1024  // 64 kb buffer for better performance
+    });
+
+    return outputStream;
+  }catch(error){
+    throw new CliError({
+      isKnown:true,
+      message:`Cannot create output file: ${filename}`,
+      category:"validation",
+      code:error?.code,
+      originalError:error
+    })
+  }
+}
+
+
+export function outputWrite(outputWriteStream,data){
+  // chain write to ensure only one write happen at time;
+  if(outputWriteStream){
+    if(!outputWriteStream.write(data)){
+      // Buffer full -> apply backpressure
+      return new Promise(resolve=>{
+        outputWriteStream.once("drain",resolve);
+      })
+    }
+    return Promise.resolve();
+  }else{
+    if(!process.stdout.write(data)){
+      return new Promise(resolve=>{
+        process.stdout.once("drain",resolve);
+      })
+    }
+    return Promise.resolve();
+  }
+}

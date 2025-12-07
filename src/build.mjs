@@ -45,7 +45,6 @@ const builder = {
                 headers:req_headers,
                 body:req_body
             })
-
             // replace request params with fuzz
             //-------------------------------------------------------------
             const requestModule = new Request();
