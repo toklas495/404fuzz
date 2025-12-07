@@ -1,33 +1,8 @@
-# Contributing to 404fuzz
+# Contributing to 404ping
 
-First off, thank you for considering contributing to 404fuzz! It's people like you that make 404fuzz such a great tool.
+Thanks for your interest in contributing! 🎉
 
-## Code of Conduct
-
-By participating in this project, you agree to maintain a respectful and inclusive environment for everyone.
-
-## How Can I Contribute?
-
-### Reporting Bugs
-
-Before creating bug reports, please check the issue list as you might find out that you don't need to create one. When you are creating a bug report, please include as many details as possible:
-
-- **Clear title and description**
-- **Steps to reproduce** the behavior
-- **Expected behavior**
-- **Actual behavior**
-- **Screenshots** (if applicable)
-- **Environment details** (OS, Node.js version, etc.)
-
-### Suggesting Enhancements
-
-Enhancement suggestions are tracked as GitHub issues. When creating an enhancement suggestion, please include:
-
-- **Clear title and description**
-- **Use case** - why is this feature useful?
-- **Proposed solution** (if you have one)
-
-### Pull Requests
+## How to Contribute
 
 1. Fork the repo
 2. Create a new branch (`git checkout -b feature/amazing-feature`)
@@ -37,77 +12,22 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 6. Push (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
-## Development Process
+## Guidelines
 
-### Setting Up Development Environment
-
-```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/404fuzz.git
-cd 404fuzz
-
-# Install dependencies
-npm install
-
-# Make executable
-chmod +x app.mjs
-
-# Link globally for testing
-npm link
-```
-
-### Code Style
-
-- Use ES6+ features
+- Keep code clean and readable
+- Add comments where necessary
+- Test your changes before submitting
 - Follow existing code style
-- Use meaningful variable names
-- Add comments for complex logic
-- Keep functions focused and small
 
-### Testing
+## Found a Bug?
 
-Before submitting a PR, please test your changes:
+Open an issue with:
+- Description of the bug
+- Steps to reproduce
+- Expected vs actual behavior
 
-```bash
-# Test basic functionality
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt
+## Have Questions?
 
-# Test with different options
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt -c 4
-```
+Open an issue or reach out to [@toklas495](https://twitter.com/toklas495)
 
-### Commit Messages
-
-- Use clear, descriptive commit messages
-- Reference issue numbers if applicable
-- Follow conventional commit format when possible
-
-Example:
-```
-feat: Add JSON output format option
-fix: Resolve memory leak in dashboard
-docs: Update README with new examples
-```
-
-## Project Structure
-
-```
-404fuzz/
-├── app.mjs                 # Main entry point
-├── src/
-│   ├── build.mjs           # Request builder
-│   ├── cmdArguments/       # CLI argument parsing
-│   ├── engine/            # Fuzzing engines
-│   ├── handlers/          # Request/file handlers
-│   └── utils/             # Utility functions
-├── README.md
-├── CHANGELOG.md
-└── package.json
-```
-
-## Questions?
-
-Feel free to open an issue for any questions or reach out to [@toklas495](https://twitter.com/toklas495) on Twitter.
-
-Thank you for contributing! 🎉
-
+Happy hacking! 🚀
