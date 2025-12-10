@@ -132,7 +132,6 @@ class FuzzEngine {
                         // - Only fatal errors (validation, programming bugs) should stop fuzzing
 
                         markError(); // Track error in statistics
-
                         // Check if this is a fatal error that should stop fuzzing
                         if (err instanceof CliError) {
                             // Fatal errors: validation, configuration issues - these should stop

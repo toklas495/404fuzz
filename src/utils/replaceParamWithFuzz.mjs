@@ -1,6 +1,8 @@
+import {smartEncodeFuzz} from './smartEncode.mjs';
+
 export default function replaceParamsWithFuzz(args, fuzz_in_request, fuzz_word) {
 
-  // ✅ SAFE CLONE (NO SHARED REFERENCES)
+  // ✅ SAFE CLONE (NO SHARED REFERENCESi)
   const replaceArgs = {
     path: args.path,
     headers: args.headers
@@ -11,7 +13,8 @@ export default function replaceParamsWithFuzz(args, fuzz_in_request, fuzz_word) 
 
   // ---- PATH ----
   if (fuzz_in_request?.path?.isFuzz && typeof replaceArgs.path === "string") {
-    replaceArgs.path = replaceArgs.path.split("FUZZ").join(fuzz_word);
+    let url = replaceArgs.path.split("FUZZ").join(fuzz_word);
+    replaceArgs.path = smartEncodeFuzz(url);
   }
 
   // ---- HEADERS ----
