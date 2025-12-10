@@ -160,3 +160,24 @@ export function outputWrite(outputWriteStream,data){
     return Promise.resolve();
   }
 }
+
+
+
+export async  function payloadCount(path){
+  let count = 0;
+  try{
+    const fileStream = fs.createReadStream(path,{encoding:"utf-8"});
+    const rl = readline.createInterface({
+      input:fileStream,
+      crlfDelay:Infinity
+    })
+
+    for await (const line of rl){
+      if(line.trim()) count++;
+    }
+    return count;
+  }catch(error){
+    // if we cant count, use a default
+    return count;
+  }
+}

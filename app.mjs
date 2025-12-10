@@ -3,9 +3,12 @@
 import yargs from "yargs";
 import {hideBin} from 'yargs/helpers';
 import cmdargs from "./src/cmdArguments/index.mjs";
-import clusterEngine from "./src/engine/clusterEngine.mjs";
+import builder from "./src/build.mjs";
 import CliError from "./src/utils/Error.mjs";
 import theme from "./src/utils/theme.mjs";
+import cluster from 'cluster';
+
+// important prevent worker from running cli
 
 // Handle uncaught errors
 process.on('uncaughtException', (error) => {
@@ -38,26 +41,17 @@ process.on('unhandledRejection', (reason) => {
     process.exit(1);
 });
 
+
 yargs(hideBin(process.argv))
     .scriptName("404fuzz")
-    .usage("$0 <cmd> [args]")
+    .usage("Usage: 404fuzz <url> [options]")
     .command(
-        "$0",
-        "Show Ascii Banner",
-        ()=>{},
-        ()=>{
-            import("./src/utils/banner.mjs").then(m=>m.default()).catch(err => {
-                process.stderr.write(`${theme.error('Failed to load banner: ' + err.message)}\n`);
-            });
-        }
-    )// fuzz with fuzz command
-    .command(
-        "fuzz <url>",
-        "Fuzz Http Request",
+        "* [url]",
+        false,
         cmdargs.fuzz,
         async(argv)=>{
             try {
-                await clusterEngine(argv);
+                await builder.fuzz(argv);
             } catch (error) {
                 if (error instanceof CliError) {
                     if (error.isKnown) {

@@ -1,11 +1,11 @@
 class FuzzQueue{
-    constructor(concurrency=500){
+    constructor(concurrency=5){
         this.concurrency = concurrency;
         this.running = 0;
         this.queue = [];
     }
 
-    async add(task){
+    async add(task){ 
         if(this.running>=this.concurrency){
             await new Promise(resolve=> this.queue.push(resolve));
         }

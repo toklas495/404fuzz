@@ -1,108 +1,21 @@
 import cluster from 'cluster';
 import os from 'os';
-import builder from '../build.mjs';
+import fuzzHander from '../handlers/fuzzHandler.mjs';
 import { setUpClusterRps } from '../utils/clusterRps.mjs';
 import { initDashboard, cleanupDashboard } from '../utils/fixedDashboard.mjs';
 import CliError from '../utils/Error.mjs';
 import theme from '../utils/theme.mjs';
 import fs from 'fs';
 import banner from '../utils/banner.mjs';
-import { startRpsFlush, stopRpsFlush } from '../utils/liveRps.mjs';
-import {outputStream,outputWrite} from '../handlers/fileHandler.mjs';
+import { startRpsFlush, stopRpsFlush,calculateCores } from '../utils/liveRps.mjs';
+import {outputStream,outputWrite,payloadCount} from '../handlers/fileHandler.mjs';
+import { validateFuzzPlaceholder } from '../utils/findFuzz.mjs';
 
 
 let masterOutputStream = null; 
-/**
- * Calculate number of cores to use based on user input
- * @param {string|number} coresOption - 'half', 'all', 'single', or a number
- * @param {number} maxCores - Maximum available cores
- * @returns {number} Number of cores to use
- */
-function calculateCores(coresOption, maxCores) {
-    if (typeof coresOption === 'number') {
-        // User specified a number - cap at max cores
-        return Math.min(coresOption, maxCores);
-    }
-    
-    const option = String(coresOption).toLowerCase().trim();
-    
-    switch (option) {
-        case 'half':
-            return Math.max(1, Math.floor(maxCores / 2));
-        case 'all':
-            return maxCores;
-        case 'single':
-            return 1;
-        default:
-            // Try to parse as number
-            const num = parseInt(option);
-            if (!isNaN(num) && num > 0) {
-                return Math.min(num, maxCores);
-            }
-            // Default to half if invalid
-            return Math.max(1, Math.floor(maxCores / 2));
-    }
-}
-
 // Track if cluster listeners are already set up (prevent duplicates)
 let clusterListenersSetup = false;
 
-/**
- * Validate that FUZZ placeholder exists in the request
- * This prevents wasting time if no FUZZ parameter is found
- * @param {string} url - The URL to check
- * @param {string} data - Request body data
- * @param {Array|Object} headers - Request headers (array of "key:value" or object)
- * @returns {boolean} True if FUZZ found, false otherwise
- */
-function validateFuzzPlaceholder(url, data, headers) {
-    // Check URL
-    if (url && typeof url === 'string' && url.includes('FUZZ')) {
-        return true;
-    }
-    
-    // Check request body
-    if (data) {
-        if (typeof data === 'string' && data.includes('FUZZ')) {
-            return true;
-        }
-        if (typeof data === 'object') {
-            try {
-                const dataStr = JSON.stringify(data);
-                if (dataStr.includes('FUZZ')) {
-                    return true;
-                }
-            } catch (e) {
-                // If can't stringify, check as string
-                if (String(data).includes('FUZZ')) {
-                    return true;
-                }
-            }
-        }
-    }
-    
-    // Check headers - can be array of "key:value" strings or object
-    if (headers) {
-        if (Array.isArray(headers)) {
-            // Array format: ["key:value", "key2:value2"]
-            for (const header of headers) {
-                if (typeof header === 'string' && header.includes('FUZZ')) {
-                    return true;
-                }
-            }
-        } else if (typeof headers === 'object') {
-            // Object format: {key: "value", key2: "value2"}
-            for (const [key, value] of Object.entries(headers)) {
-                if ((typeof key === 'string' && key.includes('FUZZ')) ||
-                    (typeof value === 'string' && value.includes('FUZZ'))) {
-                    return true;
-                }
-            }
-        }
-    }
-    
-    return false;
-}
 
 async function clusterEngine(argv){
     if(cluster.isPrimary){
@@ -207,22 +120,7 @@ async function clusterEngine(argv){
         process.stdout.write(`${theme.info(`Using ${cores}/${maxCores} CPU cores (${coresInfo})`)}\n`);
         
         // Count wordlist lines for progress tracking (fast async counting)
-        let wordlistCount = 0;
-        try {
-            const fileStream = fs.createReadStream(argv.wordlist, { encoding: 'utf-8' });
-            const readline = (await import('readline')).default;
-            const rl = readline.createInterface({
-                input: fileStream,
-                crlfDelay: Infinity
-            });
-            
-            for await (const line of rl) {
-                if (line.trim()) wordlistCount++;
-            }
-        } catch (error) {
-            // If we can't count, use a default
-            wordlistCount = 0;
-        }
+        let wordlistCount = await payloadCount(argv.wordlist);
 
         process.stdout.write(`${theme.info(`Wordlist: ${wordlistCount} words | Starting ${cores} workers...`)}\n\n`);
         
@@ -293,7 +191,7 @@ async function clusterEngine(argv){
         });
 
         try {
-            await builder.requestHander(argv);
+            await fuzzHander(argv);
             // ensure flush stopped before exit
             stopRpsFlush();
             process.exit(0);

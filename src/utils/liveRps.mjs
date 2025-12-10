@@ -40,3 +40,29 @@ export function markSuccess() {
 export function markError() {
   localErrors++;
 }
+
+export function calculateCores(coresOption, maxCores) {
+    if (typeof coresOption === 'number') {
+        // User specified a number - cap at max cores
+        return Math.min(coresOption, maxCores);
+    }
+    
+    const option = String(coresOption).toLowerCase().trim();
+    
+    switch (option) {
+        case 'half':
+            return Math.max(1, Math.floor(maxCores / 2));
+        case 'all':
+            return maxCores;
+        case 'single':
+            return 1;
+        default:
+            // Try to parse as number
+            const num = parseInt(option);
+            if (!isNaN(num) && num > 0) {
+                return Math.min(num, maxCores);
+            }
+            // Default to half if invalid
+            return Math.max(1, Math.floor(maxCores / 2));
+    }
+}

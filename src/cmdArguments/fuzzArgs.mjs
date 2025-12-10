@@ -2,11 +2,10 @@ import CliError from "../utils/Error.mjs";
 
 const fuzzArgs = (yargs) => {
     return yargs
-        .usage("Usage: 404fuzz <url> [options]")
         .positional("url", {
             type: "string",
             descrble: "The API endpoint URL you want to request.",
-            demandOption: true,
+            // demandOption: true,
         })
         .option("method", {
             alias: "X",
@@ -23,6 +22,11 @@ const fuzzArgs = (yargs) => {
             alias: "H",
             type: "array",
             describe: "Custom headers. Use Multiple -H options or an array, Format: 'key:value'. Example: -H \"Authorization: Bearer token\"",
+        })
+        .option("request",{
+            type:"string",
+            alias:"r",
+            describe:"File containing the raw http request"
         })
         .option("wordlist", {
             type: "string",
@@ -101,7 +105,14 @@ const fuzzArgs = (yargs) => {
             "404fuzz fuzz https://api.example.com/FUZZ -w wordlist.txt --cores half"
         )
         .check((argv) => {
-            // validate header
+            if(!argv.url && !argv.request){
+                throw new CliError({
+                    isKnown:true,
+                    message:"Missing required input. Provide either a URL or --request <file>.",
+                    type:"warn",
+                    category:"validation"
+                })
+            }
             if (argv.header) {
                 argv.header.forEach((h) => {
                     if (!h.includes(":")) {
