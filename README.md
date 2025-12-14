@@ -80,13 +80,13 @@ You should see the 404fuzz banner!
 
 ```bash
 # Basic fuzzing
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt
+404fuzz https://example.com/FUZZ -w wordlist.txt
 
 # With custom HTTP method
-404fuzz fuzz https://api.example.com/FUZZ -w wordlist.txt -X POST
+404fuzz https://api.example.com/FUZZ -w wordlist.txt -X POST
 
 # Control CPU cores (use half of available cores)
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt --cores half
+404fuzz https://example.com/FUZZ -w wordlist.txt --cores half
 ```
 
 ## 📖 Usage
@@ -94,7 +94,7 @@ You should see the 404fuzz banner!
 ### Basic Syntax
 
 ```bash
-404fuzz fuzz <url> [options]
+404fuzz <url> [options]
 ```
 
 ### Required Arguments
@@ -110,6 +110,7 @@ You should see the 404fuzz banner!
 | `--wordlist` | `-w` | Wordlist file path | *required* |
 | `--header` | `-H` | Custom headers (format: `key:value`) | - |
 | `--data` | `-d` | Request body (JSON format) | - |
+| `--request` | `-r` | File containing the raw HTTP request | - |
 | `--timeout` | - | Request timeout in milliseconds | - |
 | `--insecure` | `-k` | Allow insecure SSL connections | false |
 | `--delay` | - | Delay between requests (seconds) | 0 |
@@ -133,13 +134,13 @@ The `--cores` option allows you to control CPU utilization:
 **Example:**
 ```bash
 # Use 4 cores
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt -c 4
+404fuzz https://example.com/FUZZ -w wordlist.txt -c 4
 
 # Use all cores (maximum speed)
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt --cores all
+404fuzz https://example.com/FUZZ -w wordlist.txt --cores all
 
 # Use single core (lightweight)
-404fuzz fuzz https://example.com/FUZZ -w wordlist.txt --cores single
+404fuzz https://example.com/FUZZ -w wordlist.txt --cores single
 ```
 
 ## 📚 Examples
@@ -147,13 +148,13 @@ The `--cores` option allows you to control CPU utilization:
 ### Basic Directory Fuzzing
 
 ```bash
-404fuzz fuzz https://example.com/FUZZ -w /path/to/wordlist.txt
+404fuzz https://example.com/FUZZ -w /path/to/wordlist.txt
 ```
 
 ### API Endpoint Fuzzing with POST
 
 ```bash
-404fuzz fuzz https://api.example.com/user/FUZZ \
+404fuzz https://api.example.com/user/FUZZ \
   -X POST \
   -d '{"email":"FUZZ@example.com"}' \
   -w emails.txt \
@@ -164,17 +165,23 @@ The `--cores` option allows you to control CPU utilization:
 ### Fuzzing with Custom Headers
 
 ```bash
-404fuzz fuzz https://api.example.com/FUZZ \
+404fuzz https://api.example.com/FUZZ \
   -w wordlist.txt \
   -H "User-Agent: 404fuzz/1.0" \
   -H "X-API-Key: your-key-here"
+```
+
+### Using Raw HTTP Request File
+
+```bash
+404fuzz -r request.txt -w wordlist.txt
 ```
 
 ### Match Specific Status Codes
 
 ```bash
 # Only show 200, 301, 403 status codes
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   -m "200,301,403"
 ```
@@ -183,7 +190,7 @@ The `--cores` option allows you to control CPU utilization:
 
 ```bash
 # Hide 404 and 500 status codes
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   -f "404,500"
 ```
@@ -191,7 +198,7 @@ The `--cores` option allows you to control CPU utilization:
 ### Insecure SSL Connections
 
 ```bash
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   -k
 ```
@@ -199,7 +206,7 @@ The `--cores` option allows you to control CPU utilization:
 ### Custom Timeout and Delay
 
 ```bash
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   --timeout 5000 \
   --delay 0.1
@@ -209,7 +216,7 @@ The `--cores` option allows you to control CPU utilization:
 
 ```bash
 # Use 1000 concurrent requests
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   -t 1000
 ```
@@ -218,7 +225,7 @@ The `--cores` option allows you to control CPU utilization:
 
 ```bash
 # Output results in JSON format (JSONL - one JSON object per line)
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   --json
 
@@ -227,18 +234,18 @@ The `--cores` option allows you to control CPU utilization:
 # {"url":"https://example.com/api","status":403,"size":567,"words":12,"lines":3,"time":89,"fuzz":"api"}
 
 # Save JSON output to file using --output (recommended - faster streaming)
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   --json \
   --output results.json
 
 # Save normal output to file
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   --output results.txt
 
 # Or use shell redirection (slower)
-404fuzz fuzz https://example.com/FUZZ \
+404fuzz https://example.com/FUZZ \
   -w wordlist.txt \
   --json > results.json
 ```
